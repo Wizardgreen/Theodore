@@ -5,7 +5,9 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^14.14.22",
+    "concurrently": "^5.3.0",
     "discord.js": "^12.5.1",
+    "nodemon": "^2.0.7",
     "typescript": "^4.1.3"
   },
   "devDependencies": {
@@ -14,6 +16,6 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./bin/index.js",
-    "dev": "ts-node ./src/index.ts"
+    "dev": "concurrently \"tsc -w\" \"nodemon bin/index.js\""
   }
 }

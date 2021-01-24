@@ -18,7 +18,7 @@ client.on("message", (msg) => {
   const chID = msg.channel.id;
   if (memberID === meID && chID === testChID) {
     if (isTextCh(msg.channel)) {
-      msg.channel.send("完成");
+      msg.channel.send(msg.content);
     }
   }
 });

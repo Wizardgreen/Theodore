@@ -1,11 +1,13 @@
 import Discord, { Channel } from "discord.js";
-import auth from "./auth.json";
+require("dotenv").config();
+
+const key = process.env.KEY;
 const client = new Discord.Client();
 const meID = "219673807202287616";
 const testChID = "802007033493979157";
 const isTextCh = (ch: Channel) => ch.type === "text";
 
-client.login(auth.key);
+client.login(key);
 
 client.on("ready", () => {
   console.log(`登入成功 ${client.user?.tag}`);
@@ -13,15 +15,15 @@ client.on("ready", () => {
 
 // const textChannels = client.channels.cache.array()[0];
 // console.log(textChannels);
-client.on("message", (msg) => {
-  const memberID = msg.member?.id;
-  const chID = msg.channel.id;
-  if (memberID === meID && chID === testChID) {
-    if (isTextCh(msg.channel)) {
-      msg.channel.send(msg.content);
-    }
-  }
-});
+// client.on("message", (msg) => {
+//   const memberID = msg.member?.id;
+//   const chID = msg.channel.id;
+//   if (memberID === meID && chID === testChID) {
+//     if (isTextCh(msg.channel)) {
+//       msg.channel.send(msg.content);
+//     }
+//   }
+// });
 
 // client.on("message", (msg) => {
 //   if (msg.content === "希爾多，你的職責是什麼？") {

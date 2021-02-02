@@ -23,9 +23,9 @@ export const awakeTheodore = (key: string) => {
     console.log(`登入成功 ${client.user?.tag}`);
     // (client.channels.cache.find(
     //   ({ id }) => id === ChannelInfo.test.id
-    // ) as TextChannel).send("就跟暗黑天使一樣，沒有秘密。");
-    // crawler(url);
+    // ) as TextChannel).send("0");
   });
+  // crawler(url);
 
   const rule = {
     global: "通用規則",
@@ -85,22 +85,53 @@ export const awakeTheodore = (key: string) => {
       }
     }
 
-    if (memberID === Greene) {
-      switch (cmd[0]) {
-        case "給我這個頻道的資料":
-          msg.channel.send(`頻道編號：${chID}`);
-          break;
-        case "我是誰?":
-          const id = msg.member?.id;
-          msg.reply(id || "不知道");
-          break;
-        case "你的職責是什麼？":
-          msg.reply("剷除腐敗的政權，茁壯星之子的血統！");
-          break;
-        default:
-          break;
-      }
+    // if (memberID === Greene) {
+    if (cmd[0] === "投票" && cmd[1]) {
+      const options = cmd[1].split(",");
+
+      if (options.length < 2 || options.length > 10) return;
+
+      const formatOption = options.map((option, idx) => {
+        const order = String.fromCharCode(97 + idx);
+        return `\:regional_indicator_${order}: - ${option}`;
+      });
+
+      const embed = new Discord.MessageEmbed();
+      embed.setTitle("發起投票！").addField("選項", formatOption);
+      msg.channel
+        .send(embed)
+        .then((a) => {
+          a.react(`<:regional_indicator_a:>`);
+          // formatOption.forEach((_, idx) => {
+          //   const order = String.fromCharCode(97 + idx);
+          // });
+        })
+        .catch(console.error);
     }
+    // switch (cmd[0]) {
+    //   case "給我這個頻道的資料":
+    //     msg.channel.send(`頻道編號：${chID}`);
+    //     break;
+    //   case "我是誰?":
+    //     const id = msg.member?.id;
+    //     msg.reply(id || "不知道");
+    //     break;
+    //   case "你的職責是什麼？":
+    //     msg.reply("剷除腐敗的政權，茁壯星之子的血統！");
+    //     break;
+    //   default:
+    //     break;
+    // }
+    // }
+  });
+
+  client.on("messageReactionAdd", (react) => {
+    const reactionCount = react.count;
+    const identifier = react.emoji.id || react.emoji.name;
+    const userNameList = react.users.cache
+      .array()
+      .map(({ username }) => username)
+      .join(",");
   });
 
   client.login(key);

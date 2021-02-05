@@ -97,6 +97,24 @@ export const awakeTheodore = (key: string) => {
         msg.channel.send(content);
         return;
       }
+
+      if (cmd[0] === "指令") {
+        msg.channel.send({
+          embed: {
+            title: "指令集",
+            fields: [
+              {
+                name: "遊戲規則",
+                value: "[遊戲名稱] [規則/陣營規則/通用規則]",
+              },
+              {
+                name: "發起投票",
+                value: "投票 [選項1],[選項2],[選項3]....最多10樣，還在施工中",
+              },
+            ],
+          },
+        });
+      }
     }
 
     // if (memberID === Greene) {

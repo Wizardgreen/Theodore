@@ -63,6 +63,11 @@
   dependencies:
     "@types/cheerio" "*"
 
+"@types/google-apps-script@^1.0.22":
+  version "1.0.22"
+  resolved "https://registry.yarnpkg.com/@types/google-apps-script/-/google-apps-script-1.0.22.tgz#cda9d64a3df70306c7f780fc95f6a825472dc283"
+  integrity sha512-PkzCcQfwe2UnNKg3GukrWnMeECt5XulIk0ONc6rZRgMroMs68KS673xQm0OK1ZhfNlfx+zCr3FK6QmCFi0kJQQ==
+
 "@types/lodash@^4.14.168":
   version "4.14.168"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"

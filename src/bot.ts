@@ -1,7 +1,8 @@
 import Discord, { Channel, TextChannel } from "discord.js";
-import { crawler } from "./crawler";
+// import { crawler } from "./crawler";
 import AOS from "./setting/AOS";
 import WH40K from "./setting/WH40K";
+import INF from "./setting/INF";
 
 const url =
   "https://www.warhammer-community.com/2021/01/24/sunday-preview-angels-of-darkness/";
@@ -38,6 +39,8 @@ export const awakeTheodore = (key: string) => {
     AOS: "AOS",
     wh40k: "40k",
     WH40K: "40K",
+    inf: "inf",
+    INF: "INF",
   };
 
   client.on("message", (msg) => {
@@ -83,6 +86,17 @@ export const awakeTheodore = (key: string) => {
         msg.channel.send(content);
         return;
       }
+
+      if (cmd[0] === game.inf || cmd[0] === game.INF) {
+        const inf = new INF();
+        let content = {};
+        switch (cmd[1]) {
+          case rule.all:
+            content = inf.getRules();
+        }
+        msg.channel.send(content);
+        return;
+      }
     }
 
     // if (memberID === Greene) {
@@ -107,7 +121,16 @@ export const awakeTheodore = (key: string) => {
           // });
         })
         .catch(console.error);
+      return;
     }
+
+    if (cmd[0]) {
+      if (cmd[0].includes("我")) {
+        msg.channel.send(`我不會「${cmd[0].replace("我", "你")}」`);
+      }
+      msg.channel.send(`我不會「${cmd[0]}」`);
+    }
+
     // switch (cmd[0]) {
     //   case "給我這個頻道的資料":
     //     msg.channel.send(`頻道編號：${chID}`);

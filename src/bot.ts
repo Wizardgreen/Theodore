@@ -99,7 +99,6 @@ export const awakeTheodore = (key: string) => {
       }
     }
 
-    // if (memberID === Greene) {
     if (cmd[0] === "投票" && cmd[1]) {
       const options = cmd[1].split(",");
 
@@ -124,11 +123,15 @@ export const awakeTheodore = (key: string) => {
       return;
     }
 
-    if (cmd[0]) {
+    if (cmd[0] && memberID !== Greene) {
       if (cmd[0].includes("我")) {
         msg.channel.send(`我不會「${cmd[0].replace("我", "你")}」`);
       }
       msg.channel.send(`我不會「${cmd[0]}」`);
+    } else if (cmd[0] && memberID === Greene) {
+      if (cmd[0] === "還不快歡呼") {
+        msg.channel.send("Yeeeeeeah!");
+      }
     }
 
     // switch (cmd[0]) {

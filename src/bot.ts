@@ -3,6 +3,7 @@ import Discord, { Channel, TextChannel } from "discord.js";
 import AOS from "./setting/AOS";
 import WH40K from "./setting/WH40K";
 import INF from "./setting/INF";
+import { PollOpts, PollOptsString, Game, Rule } from "./enum";
 
 const url =
   "https://www.warhammer-community.com/2021/01/24/sunday-preview-angels-of-darkness/";
@@ -28,131 +29,175 @@ export const awakeTheodore = (key: string) => {
   });
   // crawler(url);
 
-  const rule = {
-    global: "通用規則",
-    faction: "陣營規則",
-    all: "規則",
-  };
-
-  const game = {
-    aos: "aos",
-    AOS: "AOS",
-    wh40k: "40k",
-    WH40K: "40K",
-    inf: "inf",
-    INF: "INF",
-  };
-
   client.on("message", (msg) => {
     if (!msg.guild || !msg.member) return; // 不是公會、不是會員就不反應
     if (msg.member?.user.bot) return; // 是 Bot 就不反應
+    if (isTextCh(msg.channel) === false) return; // 不是文字訊息就不反應
     if (msg.content.substring(0, prefix.length) !== prefix) return; // 沒有前綴詞就不反應
 
     const memberID = msg.member?.id;
     const chID = msg.channel.id;
-    const cmd = msg.content.substring(prefix.length).split(" ");
+    const [firstCMD, ...otherCmd] = msg.content
+      .substring(prefix.length)
+      .split(" ");
 
-    if (isTextCh(msg.channel)) {
-      if (cmd[0] === game.aos || cmd[0] === game.AOS) {
-        const aos = new AOS();
-        let content = {};
-        switch (cmd[1]) {
-          case rule.faction:
-            content = aos.getFactionRules();
-            break;
-          case rule.global:
-            content = aos.getGlobalRules();
-            break;
-          case rule.all:
-            content = aos.getAllRules();
-        }
-        msg.channel.send(content);
-        return;
+    if (firstCMD === Game.aos || firstCMD === Game.AOS) {
+      const ruleType = otherCmd.join("");
+      const aos = new AOS();
+      let content = {};
+      switch (ruleType) {
+        case Rule.faction:
+          content = aos.getFactionRules();
+          break;
+        case Rule.global:
+          content = aos.getGlobalRules();
+          break;
+        case Rule.all:
+          content = aos.getAllRules();
       }
-
-      if (cmd[0] === game.wh40k || cmd[0] === game.WH40K) {
-        const wh40k = new WH40K();
-        let content = {};
-        switch (cmd[1]) {
-          case rule.faction:
-            content = wh40k.getFactionRules();
-            break;
-          case rule.global:
-            content = wh40k.getGlobalRules();
-            break;
-          case rule.all:
-            content = wh40k.getAllRules();
-        }
-        msg.channel.send(content);
-        return;
-      }
-
-      if (cmd[0] === game.inf || cmd[0] === game.INF) {
-        const inf = new INF();
-        let content = {};
-        switch (cmd[1]) {
-          case rule.all:
-            content = inf.getRules();
-        }
-        msg.channel.send(content);
-        return;
-      }
-
-      if (cmd[0] === "指令") {
-        msg.channel.send({
-          embed: {
-            title: "指令集",
-            fields: [
-              {
-                name: "遊戲規則",
-                value: "[遊戲名稱] [規則/陣營規則/通用規則]",
-              },
-              {
-                name: "發起投票",
-                value: "投票 [選項1],[選項2],[選項3]....最多10樣，還在施工中",
-              },
-            ],
-          },
-        });
-      }
+      msg.channel.send(content);
+      return;
     }
 
-    if (cmd[0] === "投票" && cmd[1]) {
-      const options = cmd[1].split(",");
+    if (firstCMD === Game.wh40k || firstCMD === Game.WH40K) {
+      const ruleType = otherCmd.join("");
+      const wh40k = new WH40K();
+      let content = {};
+      switch (ruleType) {
+        case Rule.faction:
+          content = wh40k.getFactionRules();
+          break;
+        case Rule.global:
+          content = wh40k.getGlobalRules();
+          break;
+        case Rule.all:
+          content = wh40k.getAllRules();
+      }
+      msg.channel.send(content);
+      return;
+    }
 
-      if (options.length < 2 || options.length > 10) return;
+    if (firstCMD === Game.inf || firstCMD === Game.INF) {
+      const ruleType = otherCmd.join("");
+      const inf = new INF();
+      let content = {};
+      switch (ruleType) {
+        case Rule.all:
+          content = inf.getRules();
+      }
+      msg.channel.send(content);
+      return;
+    }
 
-      const formatOption = options.map((option, idx) => {
-        const order = String.fromCharCode(97 + idx);
-        return `\:regional_indicator_${order}: - ${option}`;
+    if (firstCMD === "指令") {
+      msg.channel.send({
+        embed: {
+          title: "指令集",
+          fields: [
+            {
+              name: "遊戲規則",
+              value: `
+              指令:[遊戲名稱] [規則/陣營規則/通用規則]
+              範例:"AOS 陣營規則"
+              `,
+            },
+            {
+              name: "發起投票",
+              value: `
+              指令:投票 [選項A,選項B,...目前最多支援26個選項]
+              `,
+            },
+          ],
+        },
+      });
+      return;
+    }
+
+    if (firstCMD === "投票" && otherCmd) {
+      const rawString = otherCmd.join("");
+
+      if (rawString[0] !== "[") return;
+      if (rawString[rawString.length - 1] !== "]") return;
+
+      const preFormat = rawString.slice(1, rawString.length - 1).split(",");
+      const options = Array.from(new Set(preFormat)).filter(
+        (opt) => opt !== "" && opt !== ","
+      );
+
+      if (options.length < 2 || options.length > 26) return;
+
+      const getUppercase = (idx: number) =>
+        String.fromCharCode(65 + idx) as PollOptsString;
+
+      const content = options.map((option, idx) => {
+        return `${PollOpts[getUppercase(idx)]} - ${option}`;
       });
 
       const embed = new Discord.MessageEmbed();
-      embed.setTitle("發起投票！").addField("選項", formatOption);
+      embed.setTitle("發起投票").addField("選項", content);
+
       msg.channel
         .send(embed)
-        .then((a) => {
-          a.react(`<:regional_indicator_a:>`);
-          // formatOption.forEach((_, idx) => {
-          //   const order = String.fromCharCode(97 + idx);
-          // });
+        .then((embedMsg) => {
+          content.forEach((_, idx) => {
+            embedMsg.react(PollOpts[getUppercase(idx)]);
+          });
         })
         .catch(console.error);
       return;
     }
 
-    if (cmd[0] && memberID !== Greene) {
-      if (cmd[0].includes("我")) {
-        msg.channel.send(`我不會「${cmd[0].replace("我", "你")}」`);
+    if (firstCMD === "新品預購" && otherCmd) {
+      if (memberID !== Greene) {
+        msg.reply("只有 Greene 才能發佈新品預購喔");
+        return;
       }
-      msg.channel.send(`我不會「${cmd[0]}」`);
-    } else if (cmd[0] && memberID === Greene) {
-      if (cmd[0] === "還不快歡呼") {
-        msg.channel.send("Yeeeeeeah!");
-      }
+
+      const rawString = otherCmd.join("");
+
+      if (rawString[0] !== "[") return;
+      if (rawString[rawString.length - 1] !== "]") return;
+
+      const preFormat = rawString.slice(1, rawString.length - 1).split(",");
+      const options = Array.from(new Set(preFormat)).filter(
+        (opt) => opt !== "" && opt !== ","
+      );
+
+      if (options.length < 2 || options.length > 26) return;
+
+      const getUppercase = (idx: number) =>
+        String.fromCharCode(65 + idx) as PollOptsString;
+
+      const content = options.map((option, idx) => {
+        return `${PollOpts[getUppercase(idx)]} - ${option}`;
+      });
+
+      const embed = new Discord.MessageEmbed();
+      embed.setTitle("來啦！是新品預購！").addField("選項", content);
+
+      msg.channel
+        .send(embed)
+        .then((embedMsg) => {
+          msg.delete(); // 刪除發出命令的訊息 保持畫面乾淨
+          content.forEach((_, idx) => {
+            embedMsg.react(PollOpts[getUppercase(idx)]);
+          });
+        })
+        .catch(console.error);
+      return;
     }
 
-    // switch (cmd[0]) {
+    if (firstCMD === "還不快歡呼") {
+      msg.channel.send("Yeeeeeeah!");
+    }
+
+    if (firstCMD.includes("我")) {
+      msg.channel.send(`我不會「${firstCMD.replace("我", "你")}」`);
+      return;
+    }
+    msg.channel.send(`我不會「${firstCMD}」`);
+
+    // switch (firstCMD) {
     //   case "給我這個頻道的資料":
     //     msg.channel.send(`頻道編號：${chID}`);
     //     break;
@@ -171,6 +216,8 @@ export const awakeTheodore = (key: string) => {
 
   client.on("messageReactionAdd", (react) => {
     const reactionCount = react.count;
+    if (reactionCount === 1) return; // 第一個是希爾多的, 不用反應
+
     const identifier = react.emoji.id || react.emoji.name;
     const userNameList = react.users.cache
       .array()

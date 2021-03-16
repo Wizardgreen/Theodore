@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-const url = "http://script.google.com/[....PUT YOUR SCRIPT URL HERE....]/exec";
-=======
 import axios from "axios";
 
 const baseRequest = axios.create({
@@ -39,4 +36,3 @@ export const getSheet = createAPI({
   sheetID: Sheet.test,
   method: Method.Get,
 });
->>>>>>> dev

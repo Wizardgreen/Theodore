@@ -35,14 +35,14 @@ export enum Game {
   WH40K = "40K",
   inf = "inf",
   INF = "INF",
+  Malifaux = "噩夢鎮",
+  WarMachine = "戰爭機甲",
 }
 
 export enum Rule {
   global = "通用規則",
   faction = "陣營規則",
   all = "規則",
-<<<<<<< HEAD
-=======
   stratagem = "cp",
 }
 
@@ -56,5 +56,4 @@ export enum Roles {
   邊境遊俠 = "799991663748841564",
   吟遊詩人 = "801327123854786590",
   "Knights Cenobium" = "802408129269858324",
->>>>>>> dev
 }

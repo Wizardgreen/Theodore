@@ -3,11 +3,10 @@ import Discord, { Channel, TextChannel } from "discord.js";
 import AOS from "./setting/AOS";
 import WH40K from "./setting/WH40K";
 import INF from "./setting/INF";
+import Malifaux from "./setting/Malifaux";
+import WarMachine from "./setting/WarMachine";
 import { PollOpts, PollOptsString, Game, Rule } from "./enum";
-<<<<<<< HEAD
-=======
 import { getSheet } from "./api";
->>>>>>> dev
 
 const url =
   "https://www.warhammer-community.com/2021/01/24/sunday-preview-angels-of-darkness/";
@@ -33,15 +32,9 @@ export const awakeTheodore = (key: string) => {
   });
   // crawler(url);
 
-<<<<<<< HEAD
-  client.on("message", (msg) => {
-    if (!msg.guild || !msg.member) return; // 不是公會、不是會員就不反應
-    if (msg.member?.user.bot) return; // 是 Bot 就不反應
-=======
   client.on("message", async (msg) => {
     if (!msg.guild || !msg.member) return; // 不是公會、不是會員就不反應
     if (msg.author.bot) return; // 是 Bot 就不反應
->>>>>>> dev
     if (isTextCh(msg.channel) === false) return; // 不是文字訊息就不反應
     if (msg.content.substring(0, prefix.length) !== prefix) return; // 沒有前綴詞就不反應
 
@@ -50,7 +43,6 @@ export const awakeTheodore = (key: string) => {
     const [firstCMD, ...otherCmd] = msg.content
       .substring(prefix.length)
       .split(" ");
-<<<<<<< HEAD
 
     if (firstCMD === Game.aos || firstCMD === Game.AOS) {
       const ruleType = otherCmd.join("");
@@ -70,49 +62,6 @@ export const awakeTheodore = (key: string) => {
       return;
     }
 
-    if (firstCMD === Game.wh40k || firstCMD === Game.WH40K) {
-      const ruleType = otherCmd.join("");
-      const wh40k = new WH40K();
-      let content = {};
-      switch (ruleType) {
-        case Rule.faction:
-          content = wh40k.getFactionRules();
-          break;
-        case Rule.global:
-          content = wh40k.getGlobalRules();
-          break;
-        case Rule.all:
-          content = wh40k.getAllRules();
-=======
-
-    if (firstCMD === Game.aos || firstCMD === Game.AOS) {
-      const ruleType = otherCmd.join("");
-      const aos = new AOS();
-      let content = {};
-      switch (ruleType) {
-        case Rule.faction:
-          content = aos.getFactionRules();
-          break;
-        case Rule.global:
-          content = aos.getGlobalRules();
-          break;
-        case Rule.all:
-          content = aos.getAllRules();
->>>>>>> dev
-      }
-      msg.channel.send(content);
-      return;
-    }
-
-<<<<<<< HEAD
-    if (firstCMD === Game.inf || firstCMD === Game.INF) {
-      const ruleType = otherCmd.join("");
-      const inf = new INF();
-      let content = {};
-      switch (ruleType) {
-        case Rule.all:
-          content = inf.getRules();
-=======
     if (firstCMD === Game.wh40k || firstCMD === Game.WH40K) {
       const ruleType = otherCmd.join("");
       const wh40k = new WH40K();
@@ -130,54 +79,36 @@ export const awakeTheodore = (key: string) => {
         case Rule.stratagem:
           content = wh40k.getCoreStratagem();
           break;
->>>>>>> dev
       }
       msg.channel.send(content);
       return;
     }
 
-<<<<<<< HEAD
-    if (firstCMD === "指令") {
-      msg.channel.send({
-        embed: {
-          title: "指令集",
-          fields: [
-            {
-              name: "遊戲規則",
-              value: `
-              指令:[遊戲名稱] [規則/陣營規則/通用規則]
-              範例:"AOS 陣營規則"
-              `,
-            },
-            {
-              name: "發起投票",
-              value: `
-              指令:投票 [選項A,選項B,...目前最多支援26個選項]
-              `,
-            },
-          ],
-        },
-      });
-      return;
-    }
-
-    if (firstCMD === "投票" && otherCmd) {
-      const rawString = otherCmd.join("");
-
-      if (rawString[0] !== "[") return;
-      if (rawString[rawString.length - 1] !== "]") return;
-
-      const preFormat = rawString.slice(1, rawString.length - 1).split(",");
-      const options = Array.from(new Set(preFormat)).filter(
-        (opt) => opt !== "" && opt !== ","
-      );
-
-      if (options.length < 2 || options.length > 26) return;
-
-=======
     if (firstCMD === Game.inf || firstCMD === Game.INF) {
       const ruleType = otherCmd.join("");
       const inf = new INF();
+      let content = {};
+      switch (ruleType) {
+        case Rule.all:
+          content = inf.getRules();
+      }
+      msg.channel.send(content);
+      return;
+    }
+    if (firstCMD === Game.Malifaux) {
+      const ruleType = otherCmd.join("");
+      const inf = new Malifaux();
+      let content = {};
+      switch (ruleType) {
+        case Rule.all:
+          content = inf.getRules();
+      }
+      msg.channel.send(content);
+      return;
+    }
+    if (firstCMD === Game.WarMachine) {
+      const ruleType = otherCmd.join("");
+      const inf = new WarMachine();
       let content = {};
       switch (ruleType) {
         case Rule.all:
@@ -224,7 +155,6 @@ export const awakeTheodore = (key: string) => {
 
       if (options.length < 2 || options.length > 26) return;
 
->>>>>>> dev
       const getUppercase = (idx: number) =>
         String.fromCharCode(65 + idx) as PollOptsString;
 
@@ -246,32 +176,18 @@ export const awakeTheodore = (key: string) => {
       return;
     }
 
-<<<<<<< HEAD
-    if (firstCMD === "新品預購" && otherCmd) {
-      if (memberID !== Greene) {
-=======
     if (firstCMD === "新品預購") {
       if (authorID !== Greene) {
->>>>>>> dev
         msg.reply("只有 Greene 才能發佈新品預購喔");
         return;
       }
 
-<<<<<<< HEAD
-      const rawString = otherCmd.join("");
-
-      if (rawString[0] !== "[") return;
-      if (rawString[rawString.length - 1] !== "]") return;
-
-      const preFormat = rawString.slice(1, rawString.length - 1).split(",");
-=======
       const rawString = otherCmd.join(" ");
 
       if (rawString.startsWith("[") === false) return;
       if (rawString.endsWith("]") === false) return;
 
       const preFormat = rawString.slice(1, -1).split(",");
->>>>>>> dev
       const options = Array.from(new Set(preFormat)).filter(
         (opt) => opt !== "" && opt !== ","
       );
@@ -286,9 +202,6 @@ export const awakeTheodore = (key: string) => {
       });
 
       const embed = new Discord.MessageEmbed();
-<<<<<<< HEAD
-      embed.setTitle("來啦！是新品預購！").addField("選項", content);
-=======
       embed
         .setTitle("來啦！新品預購！")
         .setDescription(
@@ -304,7 +217,6 @@ export const awakeTheodore = (key: string) => {
         .addField("連結", "https://discord.js.org/")
         .addField("選項", content)
         .setFooter(`###今天 ${new Date().getDate()} 號，下午兩點半結單###`);
->>>>>>> dev
 
       msg.channel
         .send(embed)
@@ -316,14 +228,6 @@ export const awakeTheodore = (key: string) => {
         })
         .catch(console.error);
       return;
-<<<<<<< HEAD
-    }
-
-    if (firstCMD === "還不快歡呼") {
-      msg.channel.send("Yeeeeeeah!");
-    }
-
-=======
     }
 
     if (firstCMD === "還不快歡呼") {
@@ -331,13 +235,10 @@ export const awakeTheodore = (key: string) => {
       return;
     }
 
->>>>>>> dev
     if (firstCMD.includes("我")) {
       msg.channel.send(`我不會「${firstCMD.replace("我", "你")}」`);
       return;
     }
-<<<<<<< HEAD
-=======
 
     if (firstCMD == "GASAPI測試") {
       const startTime = new Date().getTime();
@@ -352,7 +253,6 @@ export const awakeTheodore = (key: string) => {
       return;
     }
 
->>>>>>> dev
     msg.channel.send(`我不會「${firstCMD}」`);
 
     // switch (firstCMD) {
